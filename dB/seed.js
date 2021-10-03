@@ -1,7 +1,31 @@
 // grab client with destructuring from the export in index.js
 const { client,
-        getAllUSers
+        getAllUSers,
+        createUser
 } = require('./index');
+
+const createInitialUsers = async () => {
+    try {
+        console.log("Starting to create users...");
+        const albert = await createUser({ username: 'albert', password: 'bertie99'});
+        console.log(albert);
+        console.log("Finished creating users!")
+    } catch (error) {
+        console.error("Error creating users!")
+    }
+}
+
+const rebuildDB = async () => {
+    try {
+        // connect client to database
+        client.connect();
+        await dropTables();
+        await createTables();
+        await createInitialUsers();
+    } catch (error) {
+        throw(error);
+    }
+}
 
 // calls a query which drops all tables fro database
 const dropTables = async () => {
@@ -34,17 +58,6 @@ const createTables = async () => {
         // pass error to function that calls createTables
         console.error("Error building tables!")
         throw error;
-    }
-}
-
-const rebuildDB = async () => {
-    try {
-        // connect client to database
-        client.connect();
-        await dropTables();
-        await createTables();
-    } catch (error) {
-        throw(error);
     }
 }
 
