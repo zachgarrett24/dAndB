@@ -31,14 +31,14 @@ const updateUser = async (id, fields = {}) => {
     }
 
     try {
-        const { rows } = await client.query(`
+        const { rows: [user] } = await client.query(`
             UPDATE users
             SET ${ setString }
             WHERE id=${ id }
             RETURNING *;
         `, Object.values(fields));
 
-        return rows;
+        return user;
     } catch (error) {
         throw error;
     }
