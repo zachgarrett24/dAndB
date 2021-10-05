@@ -1,7 +1,8 @@
 // grab client with destructuring from the export in index.js
 const { client,
         getAllUSers,
-        createUser
+        createUser,
+        updateUser
 } = require('./index');
 
 // calls a query which drops all tables fro database
@@ -71,11 +72,16 @@ const rebuildDB = async () => {
 const testDB = async () => {
     try {
         console.log("Starting to test database...")
-        // quieries
+        console.log("Calling get all users")
         const users = await getAllUSers();
+        console.log("Result:", users)
 
-        // log results for now
-        console.log("getAllUsers:", users);
+        console.log("Calling updateUser on users[0]")
+        const updateUserRes = await updateUser(users[0].id, {
+            name: "Newname Sogood",
+            email: "weeee@gmail.com"
+        });
+        console.log("Result:", updateUserRes)
 
         console.log("Finished database tests!")
 

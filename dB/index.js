@@ -19,6 +19,31 @@ const createUser = async ({ username, password, name, email }) => {
     }
 }
 
+const updateUser = async (id, fields = {}) => {
+    // build set string
+    const setString = Object.keys(fields).map(
+        (key, index) => `"${ key }"=$${index + 1}`
+    ).join(', ');
+
+    //return early if called without fields
+    if(setString.length === 0) {
+        return;
+    }
+
+    try {
+        const { rows } = await client.query(`
+            UPDATE users
+            SET ${ setString }
+            WHERE id=${ id }
+            RETURNING *;
+        `, Object.values(fields));
+
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+}
+
 const getAllUSers = async () => {
     const { rows } = await client.query(
         `SELECT *
@@ -32,6 +57,7 @@ const getAllUSers = async () => {
 module.exports = {
     client,
     createUser,
-    getAllUSers
+    getAllUSers,
+    updateUser
     
 }
