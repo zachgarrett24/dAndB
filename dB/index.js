@@ -4,23 +4,14 @@ const { Client } = require('pg');
 // supply db name and location of database
 const client = new Client('postgres://localhost:5432/dAndB-dev');
 
-const getAllUSers = async () => {
-    const { rows } = await client.query(
-        `SELECT id, username
-        FROM users;
-        `);
-
-        return rows;
-}
-
-const createUser = async ({ username, password }) => {
+const createUser = async ({ username, password, name, email }) => {
     try {
         const { rows } = await client.query(`
-            INSERT INTO users(username, password) 
-            VALUES ($1, $2)
+            INSERT INTO users(username, password, name, email) 
+            VALUES ($1, $2, $3, $4)
             ON CONFLICT (username) DO NOTHING
             RETURNING *;
-        `, [username, password]);
+        `, [username, password, name, email]);
 
         return rows;
     } catch (error) {
@@ -28,9 +19,19 @@ const createUser = async ({ username, password }) => {
     }
 }
 
+const getAllUSers = async () => {
+    const { rows } = await client.query(
+        `SELECT *
+        FROM users;
+        `);
+
+        return rows;
+}
+
 
 module.exports = {
     client,
-    getAllUSers,
     createUser,
+    getAllUSers
+    
 }

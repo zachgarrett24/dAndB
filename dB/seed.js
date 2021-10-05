@@ -4,32 +4,6 @@ const { client,
         createUser
 } = require('./index');
 
-const createInitialUsers = async () => {
-    try {
-        console.log("Starting to create users...");
-        const albert = await createUser({ username: 'albert', password: 'bertie99'});
-        const sandra = await createUser({ username: 'sandra', password: '2sandy4me' });
-        const glamgal = await createUser({ username: 'glamgal', password: 'soglam' });
-
-        console.log(albert, albertTwo);
-        console.log("Finished creating users!")
-    } catch (error) {
-        console.error("Error creating users!")
-    }
-}
-
-const rebuildDB = async () => {
-    try {
-        // connect client to database
-        client.connect();
-        await dropTables();
-        await createTables();
-        await createInitialUsers();
-    } catch (error) {
-        throw(error);
-    }
-}
-
 // calls a query which drops all tables fro database
 const dropTables = async () => {
     try {
@@ -52,8 +26,11 @@ const createTables = async () => {
         await client.query(`
             CREATE TABLE users (
                 id SERIAL PRIMARY KEY,
-                username varchar(255) UNIQUE NOT NULL,
-                password varchar(255) NOT NULL
+                username VARCHAR(255) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                active BOOLEAN DEFAULT true
             );
         `);
         console.log("Finished building tables!")
@@ -63,6 +40,33 @@ const createTables = async () => {
         throw error;
     }
 }
+
+const createInitialUsers = async () => {
+    try {
+        console.log("Starting to create users...");
+        const albert = await createUser({ username: 'albert', password: 'bertie99', name: 'bert', email: 'berto@gmail.com' });
+        const sandra = await createUser({ username: 'sandra', password: '2sandy4me', name: 'fred', email: 'fredo@gmail.com' });
+        const glamgal = await createUser({ username: 'glamgal', password: 'soglam', name: 'nancy', email: 'nance@gmail.com' });
+
+        console.log("Finished creating users!")
+    } catch (error) {
+        console.error("Error creating users!")
+    }
+}
+
+const rebuildDB = async () => {
+    try {
+        // connect client to database
+        client.connect();
+        await dropTables();
+        await createTables();
+        await createInitialUsers();
+    } catch (error) {
+        throw(error);
+    }
+}
+
+
 
 const testDB = async () => {
     try {
