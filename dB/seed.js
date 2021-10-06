@@ -2,7 +2,10 @@
 const { client,
         getAllUSers,
         createUser,
-        updateUser
+        updateUser,
+        createProduct,
+        updateProduct,
+        getAllProducts
 } = require('./index');
 
 // calls a query which drops all tables fro database
@@ -39,6 +42,7 @@ const createTables = async () => {
                 id SERIAL PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
                 style VARCHAR(255) NOT NULL,
+                price VARCHAR(255) NOT NULL,
                 active BOOLEAN DEFAULT true
             );
         `);
