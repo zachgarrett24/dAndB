@@ -10,6 +10,7 @@ const dropTables = async () => {
     try {
         console.log("Starting to drop tables...")
         await client.query(`
+            DROP TABLE IF EXISTS products;
             DROP TABLE IF EXISTS users;
         `);
         console.log("Finished dropping tables!")
@@ -31,6 +32,13 @@ const createTables = async () => {
                 password VARCHAR(255) NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 email VARCHAR(255) NOT NULL,
+                active BOOLEAN DEFAULT true
+            );
+
+            CREATE TABLE IF NOT EXISTS products (
+                id SERIAL PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                style VARCHAR(255) NOT NULL,
                 active BOOLEAN DEFAULT true
             );
         `);
