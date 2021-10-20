@@ -3,9 +3,10 @@ const { client,
         getAllUSers,
         createUser,
         updateUser,
+        getUserById,
         createProduct,
         updateProduct,
-        getAllProducts
+        getAllProducts,
 } = require('./index');
 
 // calls a query which drops all tables fro database
@@ -67,6 +68,18 @@ const createInitialUsers = async () => {
     }
 }
 
+const createInitialProducts = async () => {
+    try {
+        const [ albert, sandra, glamgal ] = await getAllUSers();
+
+        await createProduct({ title: "Industrial Wine Thing", style: "Hard Metal", price: "$101.99"});
+        await createProduct({ title: "Best Part Ever", style: "The Good Stuff", price: "$10"});
+        await createProduct({ title: "Whatamacallit", style: "Hoosawhatsit", price: "$0.99 Good Deal!"});
+    } catch (error) {
+        throw error;
+    }
+}
+
 const rebuildDB = async () => {
     try {
         // connect client to database
@@ -74,6 +87,7 @@ const rebuildDB = async () => {
         await dropTables();
         await createTables();
         await createInitialUsers();
+        await createInitialProducts();
     } catch (error) {
         throw(error);
     }
@@ -84,9 +98,26 @@ const rebuildDB = async () => {
 const testDB = async () => {
     try {
         console.log("Starting to test database...")
+
         console.log("Calling get all users")
         const users = await getAllUSers();
         console.log("Result:", users)
+
+        console.log("Calling getAllProducts");
+        const products = await getAllProducts();
+        console.log("Result", products);
+
+        console.log("Calling updateProduct on products[0]");
+        const updatedProduct = await updateProduct(products[0].id, {
+            title: "Plumbus",
+            style: "There's several hizzards in the way.",
+            price: "priceless"
+        });
+        console.log("Result", updatedProduct);
+
+        console.log("Calling getUserById with 1");
+        const albert = await getUserById(1);
+        console.log("Result", albert);
 
         console.log("Calling updateUser on users[0]")
         const updateUserRes = await updateUser(users[0].id, {

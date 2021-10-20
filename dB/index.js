@@ -45,22 +45,24 @@ const updateUser = async (id, fields = {}) => {
 }
 
 const getAllUSers = async () => {
-    const { rows } = await client.query(
-        `SELECT *
-        FROM users;
-        `);
-
-        return rows;
+    try {
+        const { rows } = await client.query(
+            `SELECT *
+            FROM users;
+            `);
+    
+            return rows; 
+    } catch (error) {
+        throw error;
+    }
+    
 }
 
 const createProduct = async ({title, style, price}) => {
     try {
         const { rows } = await client.query(`
-        INSERT INTO products(title, style, price), 
-        VALUES ($1, $2, $3),
-        ON CONFLICT (title) DO NOTHING,
-        ON CONFLICT (style) DO NOTHING,
-        ON CONFLICT (price) DO NOTHING,
+        INSERT INTO products(title, style, price) 
+        VALUES ($1, $2, $3)
         RETURNING *;
         `,[title, style, price]);
 
@@ -98,6 +100,26 @@ const getAllProducts = async () => {
         const { rows } = await client.query(`
             SELECT * FROM products;
         `)
+
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+}
+
+const getUserById = async (userId) => {
+    try {
+        const { rows: [user] } = await client.query(`
+            SELECT id, username, name, email, active
+            FROM users
+            WHERE id=${ userId }
+        `);
+
+        if(!user) {
+            return null;
+        }
+
+        return user;
     } catch (error) {
         throw error;
     }
@@ -108,6 +130,7 @@ module.exports = {
     client,
     createUser,
     getAllUSers,
+    getUserById,
     updateUser,
     createProduct,
     updateProduct,
