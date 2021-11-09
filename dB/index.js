@@ -108,7 +108,7 @@ const getAllProducts = async () => {
 }
 
 const createSubProducts = async (subProductList) => {
-    if (tagList.length === 0) {
+    if (subproductList.length === 0) {
         return;
     }
 
@@ -135,6 +135,33 @@ const createSubProducts = async (subProductList) => {
         throw error;
     }
 }
+
+const createProductSubProduct = async (productId, subProductId) => {
+    try {
+        await client.query(`
+            INSERT INTO product_subproducts("productId", "subProductId")
+            VALUES ($1, $2)
+            ON CONFLICT ("product", "subProductId") DO NOTHING;
+        `, [productId, subProductId])
+    } catch (error) {
+        throw error;
+    }
+}
+
+const addSubProductsToProducts = async (productId, subProductList) => {
+    try {
+        const createProductSubProductPromises = subProductList.map(
+            subProduct => createProductSubProduct(productId, subproduct.id)
+        );
+
+        await Promise.all(createProductSubProductPromises);
+
+         return await getProductById(productId);
+    } catch (error) {
+        throw error;
+    }
+}
+
 
 const getUserById = async (userId) => {
     try {
@@ -163,5 +190,7 @@ module.exports = {
     updateUser,
     createProduct,
     updateProduct,
-    getAllProducts
+    getAllProducts,
+    createSubProducts,
+    createProductSubProduct
 }
