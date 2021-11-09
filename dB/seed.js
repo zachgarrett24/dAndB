@@ -14,6 +14,8 @@ const dropTables = async () => {
     try {
         console.log("Starting to drop tables...")
         await client.query(`
+            DROP TABLE IF EXISTS product_subproducts;
+            DROP TABLE IF EXISTS subproducts;
             DROP TABLE IF EXISTS products;
             DROP TABLE IF EXISTS users;
         `);
@@ -39,12 +41,23 @@ const createTables = async () => {
                 active BOOLEAN DEFAULT true
             );
 
-            CREATE TABLE IF NOT EXISTS products (
+            CREATE TABLE products (
                 id SERIAL PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
                 style VARCHAR(255) NOT NULL,
                 price VARCHAR(255) NOT NULL,
                 active BOOLEAN DEFAULT true
+            );
+
+            CREATE TABLE subproducts (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL
+            );
+            
+            CREATE TABLE product_subproducts (
+                "productId" INTEGER REFERENCES products(id),
+                "subProductId" INTEGER REFERENCES subproducts(id),
+                UNIQUE("productId", "subProductId")
             );
         `);
         console.log("Finished building tables!")
