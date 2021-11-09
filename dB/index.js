@@ -107,6 +107,35 @@ const getAllProducts = async () => {
     }
 }
 
+const createSubProducts = async (subProductList) => {
+    if (tagList.length === 0) {
+        return;
+    }
+
+    const insertValues = subProductList.map(
+         (_, index) => `$${index + 1}`
+    ).join('), (');
+
+    const selectValues = subProductsList.map(
+        (_, index) => `$${index + 1}`
+    ).join(', ')
+    try {
+         await client.query(`
+            INSERT INTO subproducts(name)
+            VALUES (${$insertValues})
+            ON CONFLICT (name) DO NOTHING;
+        `, subProductList);
+
+        const { rows } = await client.query(`
+            SELECT * FROM subproducts
+            IN (${selectValues});
+            `, subProductList)
+            return rows;
+    } catch (error) {
+        throw error;
+    }
+}
+
 const getUserById = async (userId) => {
     try {
         const { rows: [user] } = await client.query(`
